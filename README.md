@@ -24,3 +24,15 @@ roll_dice: 6 passed
 
 - Describe any tests that you did not complete, skipped, etc:
 Skipped the 6 out of 56 tests in calculate_score, because of the realization that there were core tests that allowed most to pass.
+
+### Features
+
+- 3/27: 
+  - Created Game Logic and Dice Roll
+  
+- 3/28: 
+  - Application should implement all features from previous version (dice_roll, calculate_score)
+  - Application should allow user to set aside dice each roll
+  - Application should allow “banking” current score or rolling again.
+  - Application should keep track of total score
+  - Application should keep track of current round
