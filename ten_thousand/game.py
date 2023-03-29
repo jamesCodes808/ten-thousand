@@ -17,10 +17,11 @@ from game_logic import GameLogic
 #         self.bank = bank
 #         self.total_score = total_score
 
-# global rounds
+
 rounds = 0
 global dice
 dice = 6
+rolled_dice = []
 
 def play():
     print('Welcome to Ten Thousand')
@@ -33,23 +34,82 @@ def play():
         # start round
         #
 
+
 def start_round():
-    rounds = 0
+    global rounds
     rounds += 1
     print(f'Starting round {rounds}')
-    print(f'Rolling {dice} dice...')
-    rolled_dice = list(GameLogic.roll_dice(dice))
-    print(f'*** {rolled_dice} ***')
+    global rolled_dice
+    rolled_dice = roll_dice(dice)
+
+
     print('Enter dice to keep, or (q)uit:')
     choice = input("> ")
+
     if choice.lower() == 'q':
         print("OK. Maybe another time")
         return
-    if choice in rolled_dice:
-        print(f'you chose {choice}')
-    else:
-        start_round()
+
+    # splits and turns choices into list of integers
+    choice_list = choice.split()
+    choice_list = list(map(int, str(choice_list[0])))
+
+    # gets unbanked score and number of dice not in the choice list
+    round_result = calculate_points(choice_list, rolled_dice)
+    print(round_result)
+    end_of_round_prompt(round_result[0], round_result[1])
+
+
+
+def roll_dice(dice):
+    print(f'Rolling {dice} dice...')
+
+    # get random roll
+    rolled_dice = list(GameLogic.roll_dice(dice))
+
+    # prints rolled result
+    print(f"*** {' '.join(str(e) for e in rolled_dice)} ***")
+    return rolled_dice
+
+def calculate_points(chosen_dice, rolled_dice):
+    rolled_dice = [int(i) for i in rolled_dice]
+    chosen_dice = [int(i) for i in chosen_dice]
+
+    print('chosen dice', chosen_dice)
+    print('rolled dice', rolled_dice)
+
+    dice_match = []
+
+    for die in chosen_dice:
+        if die in rolled_dice:
+            dice_match.append(die)
+            rolled_dice.remove(die)
+
+
+    score = GameLogic.calculate_score(dice_match)
+    dice = len(rolled_dice)
+    print(f'You have {score} unbanked points and {len(rolled_dice)} dice remaining')
+    return score, dice
+
+
+
+def end_of_round_prompt(score, dice):
+    print('(r)oll again, (b)ank your points or (q)uit:')
+    choice = input('> ')
+    if choice == 'r':
+        roll_dice(dice)
+        score = calculate_points()
+    elif choice == 'b':
+        bank_score()
+    elif choice == 'q':
+        print(f'Thanks for playing. You earned {score} points')
+
+def bank_score():
+    pass
 
 if __name__ == '__main__':
     # new_game = Game(6, 3)
     play()
+
+
+    # roll_dice()
