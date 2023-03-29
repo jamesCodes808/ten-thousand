@@ -19,17 +19,25 @@ from game_logic import GameLogic
 
 
 rounds = 0
-global dice
 dice = 6
 rolled_dice = []
+round_flag = False
+roll_score = 0
+bank_score = 0
+
 
 def play():
+    global roll_score
+    global bank_score
+    global rounds
+    global round_flag
     print('Welcome to Ten Thousand')
     print('(y)es to play or (n)o to decline')
     choice = input("> ")
     if choice.lower() == 'n':
         print("OK. Maybe another time")
     else:
+        round_flag = False
         start_round()
         # start round
         #
@@ -37,27 +45,42 @@ def play():
 
 def start_round():
     global rounds
-    rounds += 1
-    print(f'Starting round {rounds}')
+    global round_flag
+    global dice
     global rolled_dice
-    rolled_dice = roll_dice(dice)
+    global roll_score
+    global bank_score
 
-
-    print('Enter dice to keep, or (q)uit:')
-    choice = input("> ")
-
-    if choice.lower() == 'q':
-        print("OK. Maybe another time")
+    if bank_score == 10000:
+        round_flag = False
+        winner_message(bank_score)
         return
 
+    if round_flag is False:
+        rounds += 1
+        print(f'Starting round {rounds}')
+        round_flag = True
+
+    while round_flag is True:
+        rolled_dice = roll_dice(dice)
+        print('Enter dice to keep, or (q)uit:')
+        choice = input("> ")
+
+        if choice.lower() == 'q':
+            print("OK. Maybe another time")
+            return
+
     # splits and turns choices into list of integers
-    choice_list = choice.split()
-    choice_list = list(map(int, str(choice_list[0])))
+        choice_list = choice.split()
+        choice_list = list(map(int, str(choice_list[0])))
 
     # gets unbanked score and number of dice not in the choice list
-    round_result = calculate_points(choice_list, rolled_dice)
-    print(round_result)
-    end_of_round_prompt(round_result[0], round_result[1])
+        round_result = calculate_points(choice_list, rolled_dice)
+        if round_result[0] == 0:
+            farkle_message()
+        else:
+            print(round_result)
+            end_of_roll_prompt(round_result[0], round_result[1])
 
 
 
@@ -93,23 +116,39 @@ def calculate_points(chosen_dice, rolled_dice):
 
 
 
-def end_of_round_prompt(score, dice):
+def end_of_roll_prompt(score, dice):
+    global round_flag
+    global rounds
     print('(r)oll again, (b)ank your points or (q)uit:')
     choice = input('> ')
     if choice == 'r':
-        roll_dice(dice)
-        score = calculate_points()
+        start_round()
     elif choice == 'b':
-        bank_score()
+        store_score(score)
+        round_flag = False
     elif choice == 'q':
         print(f'Thanks for playing. You earned {score} points')
+        round_flag = False
 
-def bank_score():
-    pass
+def store_score(score):
+    global bank_score
+    global rounds
+    bank_score += score
+    print(f'You banked {score} points in round {rounds}')
+    print(f'Total score is {bank_score} points')
+    start_round()
+
+
+def farkle_message():
+    global round_flag
+    round_flag = False
+    print(f'You farkled!')
+    start_round()
+
+def winner_message(score):
+    print(f'You have just won farkle with {score} points')
 
 if __name__ == '__main__':
     # new_game = Game(6, 3)
     play()
-
-
     # roll_dice()
