@@ -55,17 +55,17 @@ def start_round():
         choice_list = choice.split()
         choice_list = list(map(int, str(choice_list[0])))
 
-        cheater = cheat_checker(choice_list, rolled_dice)
+        valid = cheat_checker(rolled_dice, choice_list)
         print(cheater, 'outside of while loop')
-        while cheater:
+        while valid is not True:
             print('Cheater!!! Or possibly made a typo...')
             print('Enter dice to keep, or (q)uit:')
             choice = input("> ")
             choice_list = choice.split()
             choice_list = list(map(int, str(choice_list[0])))
 
-            cheater = False
-            cheater = cheat_checker(choice_list, rolled_dice)
+            valid = True
+            cheater = cheat_checker(rolled_dice, choice_list)
             print(cheater,'inside while, after cheat checker')
 
         print('broke out of cheater loop')
@@ -77,20 +77,12 @@ def start_round():
             print(round_result)
             end_of_roll_prompt(round_result[0], round_result[1])
 
-def cheat_checker(choices_list, rolled_list):
+def cheat_checker(rolled_list, choices_list):
     # choice 11 1
     #   2 3 4 5 6
     print(choices_list, 'choices inside cheat checker')
     print(rolled_list, 'rolled list inside of cheat checker')
-    temp_rolled = rolled_list[:]
-    cheater = False
-    for choice in choices_list:
-        if choice in temp_rolled:
-            temp_rolled.remove(choice)
-            print(temp_rolled, 'inside of cheat checker for loop')
-        else:
-            cheater = True
-    return cheater
+    return GameLogic.validate_keepers(rolled_list, choices_list)
 
 def roll_dice(dice):
     print(f'Rolling {dice} dice...')
@@ -105,8 +97,10 @@ def roll_dice(dice):
 def calculate_points(chosen_dice, rolled_dice):
     global dice
     global roll_score
+
     rolled_dice = [int(i) for i in rolled_dice]
     chosen_dice = [int(i) for i in chosen_dice]
+
 
     print('chosen dice', chosen_dice)
     print('rolled dice', rolled_dice)
