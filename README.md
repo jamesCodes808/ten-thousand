@@ -44,3 +44,18 @@ Skipped the 6 out of 56 tests in calculate_score, because of the realization tha
   - Should allow user to continue rolling with 6 new dice when all dice have scored in current turn.
   - Handle zilch
     - No points for round, and round is over
+
+- 3/30:
+- Create an AI Bot to play Ten Thousand
+  - The only method available for use from Game class is play.
+  - All static methods of GameLogic class are available.
+  - All other interactions with game can take place ONLY via the I/O features of the game.
+    - In other words, via injectable print and input functionality.
+    - It is FORBIDDEN to inject a custom roller function into Game class.
+- Copy bots.py to your project.
+  - Place it at root of project, at same level as requirements.txt
+- Your Bot class should be added to bots.py file with name of your choosing replacing YourBot.
+  - NOTE the code for BaseBot class is supplied for reference, but your custom code will be in the overridden 
+    _roll_bank_or_quit and/or _enter_dice methods.
+- User should be able to see your bot play by executing bots.py from terminal.
+- Application should implement all features from previous classes
